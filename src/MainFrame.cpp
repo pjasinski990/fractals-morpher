@@ -1,3 +1,4 @@
+#include <fstream>
 #include "MainFrame.hpp"
 #include "MainPanel.hpp"
 #include "design.hpp"
@@ -26,13 +27,26 @@ MainFrame::~MainFrame()
 
 void MainFrame::onLoadMenuClicked(wxCommandEvent& e)
 {
-    wxFileDialog* dialog = new wxFileDialog(this, wxT("Load File"));
-    dialog->ShowModal();
+    wxFileDialog dialog(this, wxT("Load File"), wxEmptyString, 
+            wxEmptyString, wxT("Data files (*.dat)|*.dat"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    if (dialog.ShowModal() == wxID_CANCEL) {return;}
+
+    std::fstream fstream(dialog.GetPath());
+
+    fstream >> m_transform.bitmap_size[0] >> m_transform.bitmap_size[1] >> m_transform.iter_count, m_transform.is_3d;
 
     e.Skip();
 }
 
 void MainFrame::onSaveMenuClicked(wxCommandEvent& e)
 {
+    wxFileDialog dialog(this, wxT("Save File"), wxEmptyString, 
+            wxEmptyString, wxT("Data files (*.dat)|*.dat"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+    if (dialog.ShowModal() == wxID_CANCEL) {return;}
+
+    std::fstream fstream(dialog.GetPath());
+
+    // TODO save to file
+    
     e.Skip();
 }
