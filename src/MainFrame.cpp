@@ -81,7 +81,24 @@ void MainFrame::onSaveMenuClicked(wxCommandEvent& e)
         return;
     }
 
-    // TODO save to file
+    fout << m_transform.bitmap_size[0] << " " << m_transform.bitmap_size[1] << " " << m_transform.iter_count << " " << m_transform.is_3d << std::endl;
+    fout << m_transform.observer_pos[0] << " " << m_transform.observer_pos[1] << " " << m_transform.observer_pos[2] << std::endl;
+    fout << m_transform.fractals_count << std::endl;
+
+    for (int i = 0; i < m_transform.fractals_count; i++)
+    {
+        auto ptr = m_transform.transformations_for_fractal.at(i);
+        fout << ptr->transform_count << std::endl;
+        for (int j = 0; j < ptr->transform_count; j++)
+        {
+            auto arr = ptr->transformation.at(j);
+            fout << arr[0] << " " << arr[1] << " " << arr[2] << " " << arr[3] << " " << arr[4] << " " << arr[5] << std::endl;
+        }
+        if (i != m_transform.fractals_count-1)  // if not last fractal
+        {
+            fout << ptr->frames_for_animation << std::endl;
+        }
+    }
     
     fout.close();
     e.Skip();
