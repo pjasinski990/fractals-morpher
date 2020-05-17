@@ -25,6 +25,7 @@ MainFrame::~MainFrame()
     Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::onSaveMenuClicked, this, Id::ID_SAVE);
 }
 
+// TODO refactor this to some file handler
 void MainFrame::onLoadMenuClicked(wxCommandEvent& e)
 {
     wxFileDialog dialog(this, wxT("Load File"), wxEmptyString, 
@@ -50,13 +51,11 @@ void MainFrame::onLoadMenuClicked(wxCommandEvent& e)
         {
             std::array<double, 6> arr;
             fin >> arr[0] >> arr[1] >> arr[2] >> arr[3] >> arr[4] >> arr[5];
-            // std::cout << arr[0] << " " << arr[1] << " " << arr[2] << " " << arr[3] << " " << arr[4] << " " << arr[5] << std::endl;
             ptr->transformation.push_back(arr);
         }
         if (i != m_transform.fractals_count-1)  // if not last fractal
         {
             fin >> ptr->frames_for_animation;
-            // std::cout << "frames for animation " << i << ": " << ptr->frames_for_animation << std::endl;
         }
         if (i > 0)
         {
@@ -68,6 +67,7 @@ void MainFrame::onLoadMenuClicked(wxCommandEvent& e)
     e.Skip();
 }
 
+// TODO refactor this to some file handler
 void MainFrame::onSaveMenuClicked(wxCommandEvent& e)
 {
     wxFileDialog dialog(this, wxT("Save File"), wxEmptyString, 
@@ -99,7 +99,6 @@ void MainFrame::onSaveMenuClicked(wxCommandEvent& e)
             fout << ptr->frames_for_animation << std::endl;
         }
     }
-    
     fout.close();
     e.Skip();
 }

@@ -9,5 +9,7 @@ public:
     ~Canvas();
 
 private:
+    void onUpdateUI(wxUpdateUIEvent& e);
+    void Repaint(wxDC& dc);
 
 };
