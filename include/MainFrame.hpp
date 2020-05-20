@@ -1,10 +1,11 @@
 #pragma once
 #include <wx/wx.h>
-#include "TransformParams.h"
+#include "Animation.h"
 
 class MainFrame: public wxFrame 
 {
 public:
+    static Animation animation;
 	MainFrame(wxString title);
     ~MainFrame();
 
@@ -14,8 +15,6 @@ private:
     wxPanel* m_canvas;
     wxMenuBar* m_menu_bar;
     wxMenu* m_file_menu;
-
-    TransformParams m_transform;
 
     void onLoadMenuClicked(wxCommandEvent& e);
     void onSaveMenuClicked(wxCommandEvent& e);

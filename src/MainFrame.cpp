@@ -25,6 +25,8 @@ MainFrame::~MainFrame()
     Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::onSaveMenuClicked, this, Id::ID_SAVE);
 }
 
+Animation MainFrame::animation;
+
 // TODO refactor this to some file handler
 void MainFrame::onLoadMenuClicked(wxCommandEvent& e)
 {
@@ -36,16 +38,17 @@ void MainFrame::onLoadMenuClicked(wxCommandEvent& e)
     if (!fin.is_open())
     {
         // handle, log error 
+        std::cerr << "Error opening file to load" << std::endl;
         return;
     }
 
-    fin >> m_transform.bitmap_size[0] >> m_transform.bitmap_size[1] >> m_transform.iter_count >> m_transform.is_3d;
-    fin >> m_transform.observer_pos[0] >> m_transform.observer_pos[1] >> m_transform.observer_pos[2];
-    fin >> m_transform.fractals_count;
+    fin >> animation.bitmap_size[0] >> animation.bitmap_size[1] >> animation.iter_count >> animation.is_3d;
+    fin >> animation.observer_pos[0] >> animation.observer_pos[1] >> animation.observer_pos[2];
+    fin >> animation.fractals_count;
 
-    for (int i = 0; i < m_transform.fractals_count; i++)
+    for (int i = 0; i < animation.fractals_count; i++)
     {
-        auto ptr = std::make_shared<Transformation>();
+        auto ptr = std::make_shared<Fractal>();
         fin >> ptr->transform_count;
         for (int j = 0; j < ptr->transform_count; j++)
         {
@@ -53,15 +56,15 @@ void MainFrame::onLoadMenuClicked(wxCommandEvent& e)
             fin >> arr[0] >> arr[1] >> arr[2] >> arr[3] >> arr[4] >> arr[5];
             ptr->transformation.push_back(arr);
         }
-        if (i != m_transform.fractals_count-1)  // if not last fractal
+        if (i != animation.fractals_count-1)  // if not last fractal
         {
             fin >> ptr->frames_for_animation;
         }
         if (i > 0)
         {
-            m_transform.transformations_for_fractal.at(i-1)->next = ptr;
+            animation.transformations_for_fractal.at(i-1)->next = ptr;
         }
-        m_transform.transformations_for_fractal.push_back(ptr);
+        animation.transformations_for_fractal.push_back(ptr);
     }
     fin.close();
     e.Skip();
@@ -78,23 +81,24 @@ void MainFrame::onSaveMenuClicked(wxCommandEvent& e)
     if (!fout.is_open())
     {
         // handle, log error 
+        std::cerr << "Error opening file to save" << std::endl;
         return;
     }
 
-    fout << m_transform.bitmap_size[0] << " " << m_transform.bitmap_size[1] << " " << m_transform.iter_count << " " << m_transform.is_3d << std::endl;
-    fout << m_transform.observer_pos[0] << " " << m_transform.observer_pos[1] << " " << m_transform.observer_pos[2] << std::endl;
-    fout << m_transform.fractals_count << std::endl;
+    fout << animation.bitmap_size[0] << " " << animation.bitmap_size[1] << " " << animation.iter_count << " " << animation.is_3d << std::endl;
+    fout << animation.observer_pos[0] << " " << animation.observer_pos[1] << " " << animation.observer_pos[2] << std::endl;
+    fout << animation.fractals_count << std::endl;
 
-    for (int i = 0; i < m_transform.fractals_count; i++)
+    for (int i = 0; i < animation.fractals_count; i++)
     {
-        auto ptr = m_transform.transformations_for_fractal.at(i);
+        auto ptr = animation.transformations_for_fractal.at(i);
         fout << ptr->transform_count << std::endl;
         for (int j = 0; j < ptr->transform_count; j++)
         {
             auto arr = ptr->transformation.at(j);
             fout << arr[0] << " " << arr[1] << " " << arr[2] << " " << arr[3] << " " << arr[4] << " " << arr[5] << std::endl;
         }
-        if (i != m_transform.fractals_count-1)  // if not last fractal
+        if (i != animation.fractals_count-1)  // if not last fractal
         {
             fout << ptr->frames_for_animation << std::endl;
         }

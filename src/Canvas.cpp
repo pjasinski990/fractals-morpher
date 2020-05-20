@@ -1,47 +1,34 @@
 #include <wx/rawbmp.h>
 #include "Canvas.hpp"
 #include "design.hpp"
+#include "config.hpp"
 
 Canvas::Canvas(wxWindow* parent):
         wxPanel(parent)
 {
     SetBackgroundColour(colors::background_color_2);
-    Bind(wxEVT_UPDATE_UI, &Canvas::onUpdateUI, this);
+    Bind(wxEVT_PAINT, &Canvas::onPaintEvent, this);
 }
 
 Canvas::~Canvas()
 {
-    Unbind(wxEVT_UPDATE_UI, &Canvas::onUpdateUI, this);
+    Unbind(wxEVT_PAINT, &Canvas::onPaintEvent, this);
 }
 
-void Canvas::onUpdateUI(wxUpdateUIEvent& e)
+void Canvas::onPaintEvent(wxPaintEvent& e)
 {
-    wxClientDC dc(this);
-    dc.Clear();
-    Repaint(dc);
+    wxPaintDC dc(this);
+    render(dc);
     e.Skip();
 }
 
-void Canvas::Repaint(wxDC& dc)
+void Canvas::paintNow()
 {
-    wxBitmap bmp(this->GetSize().GetWidth(), this->GetSize().GetHeight(), 24);
-    wxNativePixelData pixels(bmp);
+    wxClientDC dc(this);
+    render(dc);
+}
 
-    wxNativePixelData::Iterator p(pixels);
-    p.Offset(pixels, 10, 10);
-    for (size_t i = 0; i < 50; i++)
-    {
-        wxNativePixelData::Iterator row_start = p;
-        for (size_t j = 0; j < 50; ++j, ++p)
-        {
-            p.Red() = 255;
-            p.Green() = 0;
-            p.Blue() = 0;
-        }
-        p = row_start;
-        p.OffsetY(pixels, 1);
-    }
-    
-
-    dc.DrawBitmap(bmp, 0, 0, true);
+void Canvas::render(wxDC& dc)
+{
+    dc.Clear();
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/wx.h>
+#include "Animation.h"
 
 class Canvas: public wxPanel
 {
@@ -9,7 +10,8 @@ public:
     ~Canvas();
 
 private:
-    void onUpdateUI(wxUpdateUIEvent& e);
-    void Repaint(wxDC& dc);
+    void onPaintEvent(wxPaintEvent& e);
+    void paintNow();
+    void render(wxDC& dc);
 
 };
