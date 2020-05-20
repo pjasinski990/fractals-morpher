@@ -29,7 +29,7 @@ void Canvas::paintNow()
     render(dc);
 }
 
-void drawFractal(const wxRealPoint& start, std::vector<std::array<double, 6>> transforms, wxDC& dc, int depth)
+void drawFractal(const wxRealPoint& start, const wxSize& screen_size, std::vector<std::array<double, 6>> transforms, wxDC& dc, int depth)
 {
     if (depth > config::kdepth_max)
     {
@@ -42,14 +42,14 @@ void drawFractal(const wxRealPoint& start, std::vector<std::array<double, 6>> tr
         double b = transformation[1];
         double c = transformation[2];
         double d = transformation[3];
-        double t1 = transformation[4];
-        double t2 = transformation[5];
+        double t1 = transformation[4] * screen_size.GetX();
+        double t2 = transformation[5] * screen_size.GetY();
 
         double newx = start.x*a + start.y*b + t1;
         double newy = start.x*c + start.y*d + t2;
         wxRealPoint newpoint(newx, newy);
         dc.DrawPoint(newpoint);
-        drawFractal(newpoint, transforms, dc, depth+1);
+        drawFractal(newpoint, screen_size, transforms, dc, depth+1);
         std::cout << depth << std::endl;;
     }
 }
@@ -61,6 +61,6 @@ void Canvas::render(wxDC& dc)
 
     wxPoint starting_point(GetSize().x/2, GetSize().y/2);
     dc.DrawPoint(starting_point);
-    drawFractal(starting_point, MainFrame::animation.fractals.at(0)->transformations, dc, 0);
+    drawFractal(starting_point, GetSize(), MainFrame::animation.fractals.at(1)->transformations, dc, 0);
     
 }
