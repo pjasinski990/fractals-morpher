@@ -54,7 +54,7 @@ void MainFrame::onLoadMenuClicked(wxCommandEvent& e)
         {
             std::array<double, 6> arr;
             fin >> arr[0] >> arr[1] >> arr[2] >> arr[3] >> arr[4] >> arr[5];
-            ptr->transformation.push_back(arr);
+            ptr->transformations.push_back(arr);
         }
         if (i != animation.fractals_count-1)  // if not last fractal
         {
@@ -62,11 +62,12 @@ void MainFrame::onLoadMenuClicked(wxCommandEvent& e)
         }
         if (i > 0)
         {
-            animation.transformations_for_fractal.at(i-1)->next = ptr;
+            animation.fractals.at(i-1)->next = ptr;
         }
-        animation.transformations_for_fractal.push_back(ptr);
+        animation.fractals.push_back(ptr);
     }
     fin.close();
+    Refresh();
     e.Skip();
 }
 
@@ -91,11 +92,11 @@ void MainFrame::onSaveMenuClicked(wxCommandEvent& e)
 
     for (int i = 0; i < animation.fractals_count; i++)
     {
-        auto ptr = animation.transformations_for_fractal.at(i);
+        auto ptr = animation.fractals.at(i);
         fout << ptr->transform_count << std::endl;
         for (int j = 0; j < ptr->transform_count; j++)
         {
-            auto arr = ptr->transformation.at(j);
+            auto arr = ptr->transformations.at(j);
             fout << arr[0] << " " << arr[1] << " " << arr[2] << " " << arr[3] << " " << arr[4] << " " << arr[5] << std::endl;
         }
         if (i != animation.fractals_count-1)  // if not last fractal
