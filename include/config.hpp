@@ -2,5 +2,5 @@
 
 namespace config
 {
-    constexpr unsigned int kdepth_max = 7;
+    constexpr unsigned int kpixels_max = 65536;
 }
