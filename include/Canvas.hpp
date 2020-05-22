@@ -1,7 +1,7 @@
 #pragma once
 
 #include <wx/wx.h>
-#include "Animation.h"
+#include "Animation.hpp"
 
 class Canvas: public wxPanel
 {

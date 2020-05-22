@@ -1,6 +1,7 @@
 #pragma once
 #include <wx/wx.h>
-#include "Animation.h"
+#include "MainPanel.hpp"
+#include "Animation.hpp"
 
 class MainFrame: public wxFrame 
 {
@@ -11,7 +12,7 @@ public:
 
 private:
     enum Id {ID_LOAD, ID_SAVE};
-    wxPanel* m_main_panel;
+    MainPanel* m_main_panel;
     wxPanel* m_canvas;
     wxMenuBar* m_menu_bar;
     wxMenu* m_file_menu;

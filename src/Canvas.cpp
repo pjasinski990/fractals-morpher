@@ -63,9 +63,10 @@ void Canvas::render(wxDC& dc)
 
     wxPoint starting_point(GetSize().x/2, GetSize().y/2);
     dc.DrawPoint(starting_point);
-    int maxdepth = log(config::kpixels_max) / log(MainFrame::animation.fractals.at(0)->transform_count);
+    int maxdepth1 = log(config::kpixels_max) / log(MainFrame::animation.fractals.at(0)->transform_count);
+    int maxdepth2 = log(config::kpixels_max) / log(MainFrame::animation.fractals.at(1)->transform_count);
 
     auto trans1 = MainFrame::animation.fractals.at(0)->transformations;
     auto trans2 = MainFrame::animation.fractals.at(1)->transformations;
-    drawFractal(starting_point, GetSize(), trans1, dc, 0, maxdepth);
+    drawFractal(starting_point, GetSize(), trans2, dc, 0, maxdepth2);
 }

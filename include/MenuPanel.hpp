@@ -11,4 +11,5 @@ public:
 private:
     wxButton* m_2dbutton;
     wxButton* m_3dbutton;
+    wxTextCtrl* m_info;
 };

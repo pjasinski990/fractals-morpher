@@ -19,4 +19,6 @@ struct Animation
     std::array<double, 3> observer_pos;
     int fractals_count;
     std::vector<std::shared_ptr<Fractal>> fractals; // n for n fractals, each entry has m transformations
+
+    std::string toString() const;
 };
