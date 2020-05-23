@@ -1,6 +1,36 @@
 #include "Animation.hpp"
 #include <iostream>
 
+int Fractal::getRandomFunctionIndex() const
+{
+    return rand() % transform_count;
+}
+
+std::vector<wxRealPoint> Fractal::generatePoints(unsigned int points_max, const wxSize& drawing_size) const
+{
+    std::vector<wxRealPoint> points;
+    points.reserve(points_max);
+    points[0].x = drawing_size.GetWidth() / 2;
+    points[0].y = drawing_size.GetHeight() / 2;
+    
+    for (size_t i = 1; i < points_max; i++)
+    {
+        const auto& t= transformations.at(getRandomFunctionIndex());
+        double a = t[0];
+        double b = t[1];
+        double c = t[2];
+        double d = t[3];
+        double t1 = t[4] * drawing_size.GetWidth();
+        double t2 = t[5] * drawing_size.GetHeight();
+
+        double newx = points[i-1].x*a + points[i-1].y*b + t1;
+        double newy = points[i-1].x*c + points[i-1].y*d + t2;
+        points[i].x = newx;
+        points[i].y = newy;
+    }
+    return points;
+}
+
 std::string Animation::toString() const
 {
     std::string result = "Animaiton of size " + std::to_string(bitmap_size[0]) 

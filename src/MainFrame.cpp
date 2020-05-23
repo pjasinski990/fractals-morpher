@@ -49,6 +49,12 @@ void MainFrame::onLoadMenuClicked(wxCommandEvent& e)
 
 void MainFrame::onSaveMenuClicked(wxCommandEvent& e)
 {
+    if (MainFrame::animation.fractals_count == 0)
+    {
+        wxMessageDialog(this, wxT("No fractal currently loaded."), wxT("Error"), wxICON_ERROR | wxOK).ShowModal();
+        return;
+    }
+
     wxFileDialog dialog(this, wxT("Save File"), wxEmptyString, 
             wxEmptyString, wxT("Data files (*.dat)|*.dat"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
     if (dialog.ShowModal() == wxID_CANCEL) {return;}

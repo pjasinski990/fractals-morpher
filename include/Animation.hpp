@@ -1,4 +1,5 @@
 #pragma once
+#include <wx/wx.h>
 #include <vector>
 #include <array>
 #include <memory>
@@ -9,6 +10,9 @@ struct Fractal
     std::vector<std::array<double, 6>> transformations; // m transformation arrays for each fractal 
     int frames_for_animation; // frames for transition to next 
     std::shared_ptr<Fractal> next = nullptr;
+
+    int getRandomFunctionIndex() const;
+    std::vector<wxRealPoint> generatePoints(unsigned int points_max, const wxSize& drawing_size) const;
 };
 
 struct Animation

@@ -1,4 +1,6 @@
+#include <iomanip>
 #include <wx/rawbmp.h>
+#include <wx/dcbuffer.h>
 #include "MainFrame.hpp"
 #include "Canvas.hpp"
 #include "design.hpp"
@@ -7,9 +9,6 @@
 Canvas::Canvas(wxWindow* parent):
         wxPanel(parent)
 {
-    m_points_current.reserve(config::kpixels_max);
-    m_points_transition.reserve(config::kpixels_max);
-    m_points_next.reserve(config::kpixels_max);
     SetBackgroundColour(colors::canvas_color);
     Bind(wxEVT_PAINT, &Canvas::onPaintEvent, this);
 }
@@ -57,34 +56,45 @@ void drawFractal(std::vector<wxPoint>& points, std::vector<std::array<double, 6>
 
 void Canvas::render(wxDC& dc)
 {
-    dc.Clear();
-    int fractals_count = MainFrame::animation.fractals_count;
-    if (fractals_count == 0) {return;}
-
-    wxPoint starting_point(GetSize().x/2, GetSize().y/2);
-    dc.DrawPoint(starting_point);
-
-    auto trans1 = MainFrame::animation.fractals.at(0)->transformations;
-    auto trans2 = MainFrame::animation.fractals.at(1)->transformations;
-    drawFractal(m_points_current, trans2, GetSize(), dc);
 }
 
-void Canvas::onGenerateButtonClicked(wxCommandEvent& e)
+void Canvas::generateLoadedAnimation(const wxString& dir_path)
 {
-    if (MainFrame::animation.fractals_count == 0)
+    const Animation& animation = MainFrame::animation;
+    for (int i = 0; i < animation.fractals_count-1; i++)
     {
-        wxMessageDialog(this, wxT("No fractal currently loaded."), wxT("Error"), wxICON_ERROR | wxOK).ShowModal();
-        return;
+        const Fractal& curr_fractal = *animation.fractals.at(i);
+        const Fractal& next_fractal = *animation.fractals.at(i+1);
+        auto points_current = curr_fractal.generatePoints(config::kpixels_max, GetSize());
+        auto points_next = curr_fractal.generatePoints(config::kpixels_max, GetSize());
+
+        std::unique_ptr<std::pair<double, double>[]> diffs(new std::pair<double, double>[config::kpixels_max]);
+        for (size_t i = 0; i < config::kpixels_max; i++)
+        {
+            diffs[i].first = static_cast<double>(points_next[i].x - points_current[i].x) / curr_fractal.frames_for_animation;
+            diffs[i].second = static_cast<double>(points_next[i].y - points_current[i].y) / curr_fractal.frames_for_animation;
+        }
+
+        std::stringstream ssfrac;
+        for (int j = 0; j < curr_fractal.frames_for_animation; j++)
+        {
+            wxBitmap bmp = wxBitmap(GetSize(), 32);
+            wxClientDC dc(this);
+            
+            wxMemoryDC mdc(bmp);
+            mdc.SetPen(*wxYELLOW_PEN);
+            for (size_t k = 0; k < config::kpixels_max; k++)
+            {
+                points_current[k].x += diffs[k].first;
+                points_current[k].y += diffs[k].second;
+
+                mdc.DrawPoint(points_current[k]);
+            }
+            std::stringstream ss;
+            ss<< std::setw(4) << std::setfill('0') << j;
+            std::string filename = "/frame" + std::to_string(i) + "_" + ss.str() + ".png";
+            bmp.SaveFile(dir_path + filename, wxBITMAP_TYPE_PNG);
+            dc.DrawBitmap(bmp, wxPoint(0, 0));
+        }
     }
-
-    wxDirDialog dialog(this, wxT("Select directory for saving"), wxGetCwd(), wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
-    if (dialog.ShowModal() == wxID_CANCEL) {return;}
-
-    wxBitmap bmp = wxBitmap(wxSize(GetSize()));
-    bmp.SaveFile(dialog.GetPath() + ("/new_file_hello.png"), wxBITMAP_TYPE_PNG);
-}
-
-void Canvas::generateLoadedAnimation()
-{
-
 }

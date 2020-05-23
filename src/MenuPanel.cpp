@@ -1,5 +1,3 @@
-#include <wx/dirdlg.h>
-#include <wx/filefn.h>
 #include "MenuPanel.hpp"
 #include "MainFrame.hpp"
 #include "design.hpp"
@@ -34,9 +32,8 @@ void MenuPanel::onGenerateButtonClicked(wxCommandEvent& e)
     if (dialog.ShowModal() == wxID_CANCEL) {return;}
 
     m_generate_button->Disable();
-    m_generate_button->SetLabelText(wxT("Generating..."));
-    // wxBitmap bmp = wxBitmap(wxSize(GetSize()));
-    // bmp.SaveFile(dialog.GetPath() + ("/new_file_hello.png"), wxBITMAP_TYPE_PNG);
+    Update();
     MainPanel* parent = dynamic_cast<MainPanel*>(GetParent());
-    parent->getCanvas()->generateLoadedAnimation();
+    parent->getCanvas()->generateLoadedAnimation(dialog.GetPath());
+    m_generate_button->Enable();
 }
