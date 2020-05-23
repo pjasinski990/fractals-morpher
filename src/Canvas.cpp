@@ -66,7 +66,7 @@ void Canvas::generateLoadedAnimation(const wxString& dir_path)
         const Fractal& curr_fractal = *animation.fractals.at(i);
         const Fractal& next_fractal = *animation.fractals.at(i+1);
         auto points_current = curr_fractal.generatePoints(config::kpixels_max, GetSize());
-        auto points_next = curr_fractal.generatePoints(config::kpixels_max, GetSize());
+        auto points_next = next_fractal.generatePoints(config::kpixels_max, GetSize());
 
         std::unique_ptr<std::pair<double, double>[]> diffs(new std::pair<double, double>[config::kpixels_max]);
         for (size_t i = 0; i < config::kpixels_max; i++)
@@ -78,11 +78,14 @@ void Canvas::generateLoadedAnimation(const wxString& dir_path)
         std::stringstream ssfrac;
         for (int j = 0; j < curr_fractal.frames_for_animation; j++)
         {
-            wxBitmap bmp = wxBitmap(GetSize(), 32);
+            wxBitmap bmp;
+            bmp.Create(GetSize(), 32);
             wxClientDC dc(this);
             
             wxMemoryDC mdc(bmp);
-            mdc.SetPen(*wxYELLOW_PEN);
+            mdc.SetBackground(colors::canvas_color);
+            mdc.Clear();
+            mdc.SetPen(wxPen(colors::fractal_color));
             for (size_t k = 0; k < config::kpixels_max; k++)
             {
                 points_current[k].x += diffs[k].first;
