@@ -13,7 +13,7 @@ MainPanel::MainPanel(wxWindow* parent):
                 wxTE_MULTILINE | wxTE_READONLY | wxTE_RICH)}
 {
     SetBackgroundColour(colors::background_color_1);
-    m_info->SetMinSize(wxSize(0, 80));
+    m_info->SetMinSize(wxSize(0, 120));
     m_info->AppendText(wxT("No file loaded"));
 
     wxBoxSizer* sizer_main = new wxBoxSizer(wxVERTICAL);

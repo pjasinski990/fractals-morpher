@@ -9,7 +9,9 @@ public:
     ~MenuPanel();
 
 private:
-    wxButton* m_2dbutton;
-    wxButton* m_3dbutton;
+    wxButton* m_generate_button;
     wxTextCtrl* m_info;
+
+    void onGenerateButtonClicked(wxCommandEvent& e);
+
 };

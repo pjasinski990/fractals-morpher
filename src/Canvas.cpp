@@ -7,7 +7,10 @@
 Canvas::Canvas(wxWindow* parent):
         wxPanel(parent)
 {
-    SetBackgroundColour(colors::background_color_2);
+    m_points_current.reserve(config::kpixels_max);
+    m_points_transition.reserve(config::kpixels_max);
+    m_points_next.reserve(config::kpixels_max);
+    SetBackgroundColour(colors::canvas_color);
     Bind(wxEVT_PAINT, &Canvas::onPaintEvent, this);
 }
 
@@ -29,16 +32,14 @@ void Canvas::paintNow()
     render(dc);
 }
 
-void drawFractal(const wxRealPoint& start, const wxSize& screen_size, std::vector<std::array<double, 6>> transforms, wxDC& dc, int depth, int maxdepth)
+void drawFractal(std::vector<wxPoint>& points, std::vector<std::array<double, 6>> transforms, const wxSize& screen_size, wxDC& dc)
 {
-    if (depth > maxdepth)
+    points[0].x = screen_size.GetWidth()/2;
+    points[0].y = screen_size.GetHeight()/2;
+    for (size_t i = 1; i < config::kpixels_max; i++)
     {
-        return;
-    }
-    int i = 0;
-    const wxColor* colors[] = {wxRED, wxYELLOW, wxGREEN, wxBLUE, wxBLACK};
-    for (const auto& transformation: transforms)
-    {
+        int index = rand()%transforms.size();
+        const auto& transformation = transforms.at(index);
         double a = transformation[0];
         double b = transformation[1];
         double c = transformation[2];
@@ -46,12 +47,11 @@ void drawFractal(const wxRealPoint& start, const wxSize& screen_size, std::vecto
         double t1 = transformation[4] * screen_size.GetX();
         double t2 = transformation[5] * screen_size.GetY();
 
-        double newx = start.x*a + start.y*b + t1;
-        double newy = start.x*c + start.y*d + t2;
-        wxRealPoint newpoint(newx, newy);
-        dc.SetPen(wxPen(*colors[i++]));
-        dc.DrawPoint(newpoint);
-        drawFractal(newpoint, screen_size, transforms, dc, depth+1, maxdepth);
+        double newx = points[i-1].x*a + points[i-1].y*b + t1;
+        double newy = points[i-1].x*c + points[i-1].y*d + t2;
+        points[i].x = newx;
+        points[i].y = newy;
+        dc.DrawPoint(wxRealPoint(newx, newy));
     }
 }
 
@@ -63,10 +63,28 @@ void Canvas::render(wxDC& dc)
 
     wxPoint starting_point(GetSize().x/2, GetSize().y/2);
     dc.DrawPoint(starting_point);
-    int maxdepth1 = log(config::kpixels_max) / log(MainFrame::animation.fractals.at(0)->transform_count);
-    int maxdepth2 = log(config::kpixels_max) / log(MainFrame::animation.fractals.at(1)->transform_count);
 
     auto trans1 = MainFrame::animation.fractals.at(0)->transformations;
     auto trans2 = MainFrame::animation.fractals.at(1)->transformations;
-    drawFractal(starting_point, GetSize(), trans2, dc, 0, maxdepth2);
+    drawFractal(m_points_current, trans2, GetSize(), dc);
+}
+
+void Canvas::onGenerateButtonClicked(wxCommandEvent& e)
+{
+    if (MainFrame::animation.fractals_count == 0)
+    {
+        wxMessageDialog(this, wxT("No fractal currently loaded."), wxT("Error"), wxICON_ERROR | wxOK).ShowModal();
+        return;
+    }
+
+    wxDirDialog dialog(this, wxT("Select directory for saving"), wxGetCwd(), wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+    if (dialog.ShowModal() == wxID_CANCEL) {return;}
+
+    wxBitmap bmp = wxBitmap(wxSize(GetSize()));
+    bmp.SaveFile(dialog.GetPath() + ("/new_file_hello.png"), wxBITMAP_TYPE_PNG);
+}
+
+void Canvas::generateLoadedAnimation()
+{
+
 }
