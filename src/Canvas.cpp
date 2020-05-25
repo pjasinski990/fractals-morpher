@@ -61,10 +61,11 @@ void Canvas::render(wxDC& dc)
 void Canvas::generateLoadedAnimation(const wxString& dir_path)
 {
     const Animation& animation = MainFrame::animation;
+    SetSize(wxSize(animation.bitmap_size.first, animation.bitmap_size.second));
     for (int i = 0; i < animation.fractals_count-1; i++)
     {
-        const Fractal& curr_fractal = *animation.fractals.at(i);
-        const Fractal& next_fractal = *animation.fractals.at(i+1);
+        const Fractal& curr_fractal = animation.fractals.at(i);
+        const Fractal& next_fractal = animation.fractals.at(i+1);
         auto points_current = curr_fractal.generatePoints(config::kpixels_max, GetSize());
         auto points_next = next_fractal.generatePoints(config::kpixels_max, GetSize());
 
