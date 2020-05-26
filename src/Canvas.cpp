@@ -2,6 +2,7 @@
 #include <wx/rawbmp.h>
 #include <wx/dcbuffer.h>
 #include "MainFrame.hpp"
+#include "ColorGenerator.hpp"
 #include "Canvas.hpp"
 #include "design.hpp"
 #include "config.hpp"
@@ -61,13 +62,13 @@ void Canvas::render(wxDC& dc)
 void Canvas::generateLoadedAnimation(const wxString& dir_path)
 {
     const Animation& animation = MainFrame::animation;
-    SetSize(wxSize(animation.bitmap_size.first, animation.bitmap_size.second));
+    const wxSize size(MainFrame::animation.bitmap_size.first, MainFrame::animation.bitmap_size.second);
     for (int i = 0; i < animation.fractals_count-1; i++)
     {
         const Fractal& curr_fractal = animation.fractals.at(i);
         const Fractal& next_fractal = animation.fractals.at(i+1);
-        auto points_current = curr_fractal.generatePoints(config::kpixels_max, GetSize());
-        auto points_next = next_fractal.generatePoints(config::kpixels_max, GetSize());
+        auto points_current = curr_fractal.generatePoints(config::kpixels_max, size);
+        auto points_next = next_fractal.generatePoints(config::kpixels_max, size);
 
         std::unique_ptr<std::pair<double, double>[]> diffs(new std::pair<double, double>[config::kpixels_max]);
         for (size_t i = 0; i < config::kpixels_max; i++)
@@ -80,13 +81,14 @@ void Canvas::generateLoadedAnimation(const wxString& dir_path)
         for (int j = 0; j < curr_fractal.frames_for_animation; j++)
         {
             wxBitmap bmp;
-            bmp.Create(GetSize(), 32);
+            bmp.Create(size, 32);
             wxClientDC dc(this);
             
             wxMemoryDC mdc(bmp);
             mdc.SetBackground(colors::canvas_color);
             mdc.Clear();
-            mdc.SetPen(wxPen(colors::fractal_color));
+            mdc.SetPen(wxPen(ColorGenerator::getNewColor()));
+
             for (size_t k = 0; k < config::kpixels_max; k++)
             {
                 points_current[k].x += diffs[k].first;
@@ -98,7 +100,10 @@ void Canvas::generateLoadedAnimation(const wxString& dir_path)
             ss<< std::setw(4) << std::setfill('0') << j;
             std::string filename = "/frame" + std::to_string(i) + "_" + ss.str() + ".png";
             bmp.SaveFile(dir_path + filename, wxBITMAP_TYPE_PNG);
-            dc.DrawBitmap(bmp, wxPoint(0, 0));
+
+            int bmp_x_position = (GetSize().GetWidth() - size.GetWidth()) / 2;
+            int bmp_y_position = (GetSize().GetHeight() - size.GetHeight()) / 2;
+            dc.DrawBitmap(bmp, wxPoint(bmp_x_position, bmp_y_position));
         }
     }
 }

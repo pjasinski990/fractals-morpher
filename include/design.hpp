@@ -9,3 +9,9 @@ namespace colors
     static const wxColor canvas_color(50, 50, 50);
     static const wxColor fractal_color(0, 255, 128);
 }
+
+namespace design_constants
+{
+    static const double ksaturation = 1.0;
+    static const double kvalue = 0.8;
+}

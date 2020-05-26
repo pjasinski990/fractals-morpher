@@ -16,8 +16,8 @@ MainPanel::MainPanel(wxWindow* parent):
     m_info->SetMinSize(wxSize(0, 120));
     m_info->AppendText(wxT("No file loaded"));
 
-    wxBoxSizer* sizer_main = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* sizer_horiz = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* sizer_main = new wxBoxSizer(wxVERTICAL);
 
     sizer_horiz->Add(m_canvas, 1, wxEXPAND | wxLEFT | wxUP, 5);
     sizer_horiz->Add(m_menu_panel, 0, wxALL, 5);
@@ -26,7 +26,6 @@ MainPanel::MainPanel(wxWindow* parent):
     sizer_main->Add(m_info, 0, wxEXPAND | wxALL, 5);
 
     SetSizerAndFit(sizer_main);
-
 }
 
 MainPanel::~MainPanel() = default;

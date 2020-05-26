@@ -43,7 +43,6 @@ void MainFrame::onLoadMenuClicked(wxCommandEvent& e)
     {
         std::cerr << e.what() << '\n';
     }
-
     e.Skip();
 }
 
@@ -67,6 +66,5 @@ void MainFrame::onSaveMenuClicked(wxCommandEvent& e)
     {
         std::cerr << e.what() << '\n';
     }
-
     e.Skip();
 }

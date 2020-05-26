@@ -13,7 +13,6 @@ public:
 private:
     enum Id {ID_LOAD, ID_SAVE};
     MainPanel* m_main_panel;
-    wxPanel* m_canvas;
     wxMenuBar* m_menu_bar;
     wxMenu* m_file_menu;
 
