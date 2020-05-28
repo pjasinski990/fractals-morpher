@@ -101,7 +101,11 @@ void Canvas::generateLoadedAnimation(const wxString& dir_path)
                 points_current[k].x += diffs[k].first;
                 points_current[k].y += diffs[k].second;
 
-                mdc.SetPen(wxPen(colors_vec[points_current[k].color_index]));
+                if (k > 0 && points_current[k-1].color_index != points_current[k].color_index)
+                {
+                    mdc.SetPen(wxPen(colors_vec[points_current[k].color_index]));
+                }
+                
                 wxPoint point(points_current[k].x, points_current[k].y);
                 mdc.DrawPoint(point);
             }
