@@ -1,4 +1,5 @@
 #include <iomanip>
+#include <algorithm>
 #include <wx/rawbmp.h>
 #include <wx/dcbuffer.h>
 #include "MainFrame.hpp"
@@ -32,7 +33,7 @@ void Canvas::paintNow()
     render(dc);
 }
 
-void drawFractal(std::vector<wxPoint>& points, std::vector<std::array<double, 6>> transforms, const wxSize& screen_size, wxDC& dc)
+void drawFractal(std::vector<wxPoint>& points, std::vector<transformation_t> transforms, const wxSize& screen_size, wxDC& dc)
 {
     points[0].x = screen_size.GetWidth()/2;
     points[0].y = screen_size.GetHeight()/2;
@@ -69,6 +70,8 @@ void Canvas::generateLoadedAnimation(const wxString& dir_path)
         const Fractal& next_fractal = animation.fractals.at(i+1);
         auto points_current = curr_fractal.generatePoints(config::kpixels_max, size);
         auto points_next = next_fractal.generatePoints(config::kpixels_max, size);
+        std::sort(std::begin(points_current), std::end(points_current));
+        std::sort(std::begin(points_next), std::end(points_next));
 
         std::unique_ptr<std::pair<double, double>[]> diffs(new std::pair<double, double>[config::kpixels_max]);
         for (size_t i = 0; i < config::kpixels_max; i++)
@@ -77,7 +80,12 @@ void Canvas::generateLoadedAnimation(const wxString& dir_path)
             diffs[i].second = static_cast<double>(points_next[i].y - points_current[i].y) / curr_fractal.frames_for_animation;
         }
 
-        std::stringstream ssfrac;
+        std::vector<wxColor> colors_vec;
+        for (int i = 0; i < curr_fractal.transform_count; i++)
+        {
+            colors_vec.push_back(ColorGenerator::getNewColor());
+        }
+
         for (int j = 0; j < curr_fractal.frames_for_animation; j++)
         {
             wxBitmap bmp;
@@ -87,14 +95,15 @@ void Canvas::generateLoadedAnimation(const wxString& dir_path)
             wxMemoryDC mdc(bmp);
             mdc.SetBackground(colors::canvas_color);
             mdc.Clear();
-            mdc.SetPen(wxPen(ColorGenerator::getNewColor()));
 
             for (size_t k = 0; k < config::kpixels_max; k++)
             {
                 points_current[k].x += diffs[k].first;
                 points_current[k].y += diffs[k].second;
 
-                mdc.DrawPoint(points_current[k]);
+                mdc.SetPen(wxPen(colors_vec[points_current[k].color_index]));
+                wxPoint point(points_current[k].x, points_current[k].y);
+                mdc.DrawPoint(point);
             }
             std::stringstream ss;
             ss<< std::setw(4) << std::setfill('0') << j;
@@ -107,3 +116,4 @@ void Canvas::generateLoadedAnimation(const wxString& dir_path)
         }
     }
 }
+// TODO refactor this whole thing

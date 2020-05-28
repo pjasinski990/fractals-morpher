@@ -5,6 +5,15 @@
 #include <memory>
 typedef std::array<double, 6> transformation_t;
 
+struct ColoredPoint
+{
+    ColoredPoint(double x, double y, int color = -1): x{x}, y{y}, color_index{color} {}
+    bool operator<(const ColoredPoint& o) {return color_index < o.color_index;}
+    double x;
+    double y;
+    int color_index;
+};
+
 struct Fractal
 {
     int transform_count;
@@ -12,7 +21,7 @@ struct Fractal
     int frames_for_animation; // frames for transition to next 
 
     int getRandomFunctionIndex() const;
-    std::vector<wxRealPoint> generatePoints(unsigned int points_max, const wxSize& drawing_size) const;
+    std::vector<ColoredPoint> generatePoints(unsigned int points_max, const wxSize& drawing_size) const;
 };
 
 struct Animation

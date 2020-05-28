@@ -6,16 +6,17 @@ int Fractal::getRandomFunctionIndex() const
     return rand() % transform_count;
 }
 
-std::vector<wxRealPoint> Fractal::generatePoints(unsigned int points_max, const wxSize& drawing_size) const
+std::vector<ColoredPoint> Fractal::generatePoints(unsigned int points_max, const wxSize& drawing_size) const
 {
-    std::vector<wxRealPoint> points;
-    points.reserve(points_max);
-    points[0].x = drawing_size.GetWidth() / 2;
-    points[0].y = drawing_size.GetHeight() / 2;
+    std::vector<ColoredPoint> result;
+    result.reserve(points_max);
     
+    ColoredPoint last_point(drawing_size.GetWidth() / 2, drawing_size.GetHeight() / 2, 0);
+    result.emplace_back(last_point);
     for (size_t i = 1; i < points_max; i++)
     {
-        const auto& t= transformations.at(getRandomFunctionIndex());
+        int rand_index = getRandomFunctionIndex();
+        const auto& t = transformations.at(rand_index);
         double a = t[0];
         double b = t[1];
         double c = t[2];
@@ -23,12 +24,12 @@ std::vector<wxRealPoint> Fractal::generatePoints(unsigned int points_max, const 
         double t1 = t[4] * drawing_size.GetWidth();
         double t2 = t[5] * drawing_size.GetHeight();
 
-        double newx = points[i-1].x*a + points[i-1].y*b + t1;
-        double newy = points[i-1].x*c + points[i-1].y*d + t2;
-        points[i].x = newx;
-        points[i].y = newy;
+        last_point.x = last_point.x*a + last_point.y*b + t1;
+        last_point.y = last_point.x*c + last_point.y*d + t2;
+        last_point.color_index = rand_index;
+        result.emplace_back(last_point);
     }
-    return points;
+    return result;
 }
 
 std::string Animation::toString() const
