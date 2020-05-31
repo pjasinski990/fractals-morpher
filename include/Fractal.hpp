@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <array>
 #include <wx/wx.h>
 #include "ColoredPoint.hpp"
 #include "config.hpp"
