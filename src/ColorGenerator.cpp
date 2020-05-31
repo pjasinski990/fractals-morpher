@@ -74,3 +74,13 @@ wxColour ColorGenerator::getNewColor()
     }
     return hsvToRGB(s_current_hue, design_constants::ksaturation, design_constants::kvalue);
 }
+
+std::vector<wxColor> ColorGenerator::getColorsVector(int count)
+{
+    std::vector<wxColor> colors_vec;
+    for (int i = 0; i < count; i++)
+    {
+        colors_vec.push_back(ColorGenerator::getNewColor());
+    }
+    return colors_vec;
+}

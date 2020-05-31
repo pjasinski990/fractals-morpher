@@ -1,6 +1,48 @@
 #include "Animation.hpp"
 #include <iostream>
 
+ColoredPoint& ColoredPoint::operator+=(const ColoredPoint& o)
+{
+    this->x += o.x;
+    this->y += o.y;
+    this->z += o.z;
+    return *this;
+}
+
+ColoredPoint& ColoredPoint::operator-=(const ColoredPoint& o)
+{
+    this->x -= o.x;
+    this->y -= o.y;
+    this->z -= o.z;
+    return *this;
+}
+
+ColoredPoint& ColoredPoint::operator/=(int i)
+{
+    this->x /= i;
+    this->y /= i;
+    this->z /= i;
+    return *this;
+}
+
+ColoredPoint operator+(ColoredPoint o1, const ColoredPoint& o2)
+{
+    o1 += o2;
+    return o1;
+}
+
+ColoredPoint operator-(ColoredPoint o1, const ColoredPoint& o2)
+{
+    o1 -= o2;
+    return o1;
+}
+
+ColoredPoint operator/(ColoredPoint o, int i)
+{
+    o /= i;
+    return o;
+}
+
 int Fractal::getRandomFunctionIndex() const
 {
     return rand() % transform_count;

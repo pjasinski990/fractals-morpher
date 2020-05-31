@@ -33,29 +33,6 @@ void Canvas::paintNow()
     render(dc);
 }
 
-void drawFractal(std::vector<wxPoint>& points, std::vector<transformation_t> transforms, const wxSize& screen_size, wxDC& dc)
-{
-    points[0].x = screen_size.GetWidth()/2;
-    points[0].y = screen_size.GetHeight()/2;
-    for (size_t i = 1; i < config::kpixels_max; i++)
-    {
-        int index = rand()%transforms.size();
-        const auto& transformation = transforms.at(index);
-        double a = transformation[0];
-        double b = transformation[1];
-        double c = transformation[2];
-        double d = transformation[3];
-        double t1 = transformation[4] * screen_size.GetX();
-        double t2 = transformation[5] * screen_size.GetY();
-
-        double newx = points[i-1].x*a + points[i-1].y*b + t1;
-        double newy = points[i-1].x*c + points[i-1].y*d + t2;
-        points[i].x = newx;
-        points[i].y = newy;
-        dc.DrawPoint(wxRealPoint(newx, newy));
-    }
-}
-
 void Canvas::render(wxDC& dc)
 {
 }
@@ -73,18 +50,13 @@ void Canvas::generateLoadedAnimation(const wxString& dir_path)
         std::sort(std::begin(points_current), std::end(points_current));
         std::sort(std::begin(points_next), std::end(points_next));
 
-        std::unique_ptr<std::pair<double, double>[]> diffs(new std::pair<double, double>[config::kpixels_max]);
+        std::unique_ptr<ColoredPoint[]> diffs(new ColoredPoint[config::kpixels_max]);
         for (size_t i = 0; i < config::kpixels_max; i++)
         {
-            diffs[i].first = static_cast<double>(points_next[i].x - points_current[i].x) / curr_fractal.frames_for_animation;
-            diffs[i].second = static_cast<double>(points_next[i].y - points_current[i].y) / curr_fractal.frames_for_animation;
+            diffs[i] = (points_next[i] - points_current[i]) / curr_fractal.frames_for_animation;
         }
 
-        std::vector<wxColor> colors_vec;
-        for (int i = 0; i < curr_fractal.transform_count; i++)
-        {
-            colors_vec.push_back(ColorGenerator::getNewColor());
-        }
+        std::vector<wxColor> colors_vec = ColorGenerator::getColorsVector(curr_fractal.transform_count);
 
         for (int j = 0; j < curr_fractal.frames_for_animation; j++)
         {
@@ -98,8 +70,8 @@ void Canvas::generateLoadedAnimation(const wxString& dir_path)
 
             for (size_t k = 0; k < config::kpixels_max; k++)
             {
-                points_current[k].x += diffs[k].first;
-                points_current[k].y += diffs[k].second;
+                points_current[k].x += diffs[k].x;
+                points_current[k].y += diffs[k].y;
 
                 if (k > 0 && points_current[k-1].color_index != points_current[k].color_index)
                 {
