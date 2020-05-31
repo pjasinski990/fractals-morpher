@@ -12,9 +12,12 @@ Animation FileHandler::loadAnimationFromFile(const char* file_path)
     }
 
     Animation animation;
-    fin >> animation.bitmap_size.first >> animation.bitmap_size.second >> animation.iter_count >> animation.is_3d;
+    int xsize, ysize;
+    fin >> xsize >> ysize >> animation.iter_count >> animation.is_3d;
     fin >> animation.observer_pos[0] >> animation.observer_pos[1] >> animation.observer_pos[2];
     fin >> animation.fractals_count;
+    animation.bitmap_size.SetWidth(xsize);
+    animation.bitmap_size.SetHeight(ysize);
 
     for (int i = 0; i < animation.fractals_count; i++)
     {
@@ -45,7 +48,7 @@ void FileHandler::saveAnimationToFile(const char* file_path, const Animation& an
         throw std::ios_base::failure("Error opening file " + std::string(file_path));
     }
 
-    fout << animation.bitmap_size.first << " " << animation.bitmap_size.second << " " << animation.iter_count << " " << animation.is_3d << std::endl;
+    fout << animation.bitmap_size.GetWidth() << " " << animation.bitmap_size.GetHeight() << " " << animation.iter_count << " " << animation.is_3d << std::endl;
     fout << animation.observer_pos[0] << " " << animation.observer_pos[1] << " " << animation.observer_pos[2] << std::endl;
     fout << animation.fractals_count << std::endl;
 
