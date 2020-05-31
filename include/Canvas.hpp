@@ -7,7 +7,6 @@ class Canvas: public wxPanel
 {
 public:
     Canvas(wxWindow* parent);
-    ~Canvas();
     void generateLoadedAnimation(const wxString& dir_path);
 
 private:

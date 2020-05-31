@@ -10,9 +10,11 @@ struct ColoredPoint
     ColoredPoint& operator+=(const ColoredPoint& o);
     ColoredPoint& operator-=(const ColoredPoint& o);
     ColoredPoint& operator/=(int i);
+    ColoredPoint& operator*=(int i);
     friend ColoredPoint operator+(ColoredPoint o1, const ColoredPoint& o2);
     friend ColoredPoint operator-(ColoredPoint o1, const ColoredPoint& o2);
     friend ColoredPoint operator/(ColoredPoint o, int i);
+    friend ColoredPoint operator*(ColoredPoint o, int i);
 
     double x = 0.0;
     double y = 0.0;

@@ -13,4 +13,5 @@ struct Animation
     std::vector<Fractal> fractals;
 
     std::string toString() const;
+    std::vector<wxBitmap> generateBitmaps(wxDC& dc, const wxSize& canvas_size) const;
 };
