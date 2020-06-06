@@ -3,7 +3,6 @@
 #include <iomanip>
 #include "Animation.hpp"
 #include "ColorGenerator.hpp"
-#include "config.hpp"
 #include "design.hpp"
 
 std::string Animation::toString() const
@@ -44,14 +43,14 @@ std::vector<wxBitmap> Animation::generateBitmaps(wxDC& dc, const wxSize& canvas_
     {
         const Fractal& curr_fractal = fractals.at(i);
         const Fractal& next_fractal = fractals.at(i+1);
-        auto points_current = curr_fractal.generatePoints(config::kpixels_max, bitmap_size);
-        auto points_next = next_fractal.generatePoints(config::kpixels_max, bitmap_size);
+        auto points_current = curr_fractal.generatePoints(iter_count, bitmap_size);
+        auto points_next = next_fractal.generatePoints(iter_count, bitmap_size);
 
         result.reserve(result.size() + curr_fractal.frames_for_animation);
 
         std::vector<ColoredPoint> diffs;
-        diffs.reserve(config::kpixels_max);
-        for (size_t i = 0; i < config::kpixels_max; i++)
+        diffs.reserve(iter_count);
+        for (size_t i = 0; i < iter_count; i++)
         {
             ColoredPoint point = (points_next[i] - points_current[i]) / curr_fractal.frames_for_animation;
             diffs.emplace_back(point);
@@ -59,7 +58,7 @@ std::vector<wxBitmap> Animation::generateBitmaps(wxDC& dc, const wxSize& canvas_
 
         std::vector<wxColor> colors_vec = ColorGenerator::getColorsVector(curr_fractal.transform_count);
 
-        for (int j = 0; j < curr_fractal.frames_for_animation; j++)
+        for (int j = 0; j <= curr_fractal.frames_for_animation; j++)
         {
             wxBitmap bmp;
             bmp.Create(bitmap_size, 32);
@@ -68,16 +67,16 @@ std::vector<wxBitmap> Animation::generateBitmaps(wxDC& dc, const wxSize& canvas_
             mdc.SetBackground(colors::canvas_color);
             mdc.Clear();
 
-            for (size_t k = 0; k < config::kpixels_max; k++)
+            for (size_t k = 0; k < iter_count; k++)
             {
+                wxPoint point(points_current[k].x, points_current[k].y);
+                mdc.DrawPoint(point);
+
                 points_current[k] += diffs[k];
                 if (k > 0 && points_current[k-1].color_index != points_current[k].color_index)
                 {
                     mdc.SetPen(wxPen(colors_vec[points_current[k].color_index]));
                 }
-                
-                wxPoint point(points_current[k].x, points_current[k].y);
-                mdc.DrawPoint(point);
             }
             int bmp_x_position = (canvas_size.GetWidth() - bitmap_size.GetWidth()) / 2;
             int bmp_y_position = (canvas_size.GetHeight() - bitmap_size.GetHeight()) / 2;
