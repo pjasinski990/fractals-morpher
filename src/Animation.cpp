@@ -35,6 +35,11 @@ std::string Animation::toString() const
 std::vector<wxBitmap> Animation::generateBitmaps(wxDC& dc, const wxSize& canvas_size) const
 {
     std::vector<wxBitmap> result;
+    if (is_3d) 
+    {
+        throw std::runtime_error("3D animations not supported yet");
+    }
+    
     for (int i = 0; i < fractals_count-1; i++)
     {
         const Fractal& curr_fractal = fractals.at(i);

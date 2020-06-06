@@ -1,5 +1,6 @@
 #include "MenuPanel.hpp"
 #include "MainFrame.hpp"
+#include "Canvas.hpp"
 #include "design.hpp"
 
 MenuPanel::MenuPanel(wxWindow* parent):
@@ -11,7 +12,7 @@ MenuPanel::MenuPanel(wxWindow* parent):
 
     wxBoxSizer* sizer_main = new wxBoxSizer(wxVERTICAL);
     sizer_main->Add(m_select_button, 0, wxALL | wxCENTER, 5);
-    sizer_main->Add(m_generate_button, 0, wxALL | wxCENTER, 5);
+    sizer_main->Add(m_generate_button, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxCENTER, 5);
     SetSizerAndFit(sizer_main);
 
     m_select_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MenuPanel::onSelectButtonClicked, this);

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <wx/wx.h>
-#include "Canvas.hpp"
-#include "MenuPanel.hpp"
+class Canvas;
+class MenuPanel;
 
 class MainPanel: public wxPanel
 {
