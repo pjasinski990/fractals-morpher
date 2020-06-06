@@ -78,9 +78,11 @@ std::vector<wxBitmap> Animation::generateBitmaps(wxDC& dc, const wxSize& canvas_
                     mdc.SetPen(wxPen(colors_vec[points_current[k].color_index]));
                 }
             }
-            int bmp_x_position = (canvas_size.GetWidth() - bitmap_size.GetWidth()) / 2;
-            int bmp_y_position = (canvas_size.GetHeight() - bitmap_size.GetHeight()) / 2;
-            dc.DrawBitmap(bmp, wxPoint(bmp_x_position, bmp_y_position));
+
+            wxImage img(bmp.ConvertToImage());
+            img.Rescale(canvas_size.GetWidth(), canvas_size.GetHeight());
+            dc.DrawBitmap(img, wxPoint(0, 0));
+
             result.emplace_back(bmp);
         }
     }
