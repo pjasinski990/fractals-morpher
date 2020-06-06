@@ -1,6 +1,7 @@
 #include <iomanip>
 #include "MainFrame.hpp"
 #include "Canvas.hpp"
+#include "design.hpp"
 
 Canvas::Canvas(wxWindow* parent):
         wxPanel(parent)

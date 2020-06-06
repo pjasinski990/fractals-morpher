@@ -3,8 +3,6 @@
 #include <array>
 #include <wx/wx.h>
 #include "ColoredPoint.hpp"
-#include "config.hpp"
-#include "design.hpp"
 typedef std::array<double, 6> transformation_t;
 
 struct Fractal

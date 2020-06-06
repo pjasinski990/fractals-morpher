@@ -3,6 +3,8 @@
 #include <iomanip>
 #include "Animation.hpp"
 #include "ColorGenerator.hpp"
+#include "config.hpp"
+#include "design.hpp"
 
 std::string Animation::toString() const
 {
