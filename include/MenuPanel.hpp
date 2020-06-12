@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/wx.h>
+#include "InputPanel.hpp"
 
 class MenuPanel: public wxPanel
 {
@@ -13,6 +14,8 @@ private:
     wxButton* m_generate_button;
     wxTextCtrl* m_info;
     wxString m_directory_for_saving;
+
+    InputPanel* m_input_panel;
 
     void onSelectButtonClicked(wxCommandEvent& e);
     void onGenerateButtonClicked(wxCommandEvent& e);
