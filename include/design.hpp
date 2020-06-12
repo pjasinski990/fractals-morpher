@@ -23,6 +23,7 @@ namespace static_text
 
     static const char* fractal1_label = "First fractal";
     static const char* fractal2_label = "Second fractal";
+    static const char* frames_to_second_label = "Number of frames for transition";
     static const char* transform_count_label = "Number of transformations (max 5)";
     static const char* transforms_label = "Transformations (a, b, c, d, e, f)";
 }
