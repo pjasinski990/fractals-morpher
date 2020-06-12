@@ -148,7 +148,7 @@ Animation InputPanel::getInputFields() const
         std::array<double, 6> transform;
         for (int j = 0; j < 6; j++)
         {
-            transform[i] = wxAtof(m_transforms1[i][j]->GetValue());
+            transform[j] = wxAtof(m_transforms1[i][j]->GetValue());
         }
         f1.transformations.push_back(transform);
     }
@@ -161,7 +161,7 @@ Animation InputPanel::getInputFields() const
         std::array<double, 6> transform;
         for (int j = 0; j < 6; j++)
         {
-            transform[i] = wxAtof(m_transforms2[i][j]->GetValue());
+            transform[j] = wxAtof(m_transforms2[i][j]->GetValue());
         }
         f2.transformations.push_back(transform);
     }
