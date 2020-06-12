@@ -4,12 +4,12 @@
 #include <array>
 class Animation;
 
-class InputPanel: public wxScrolledWindow
+class InputPanel: public wxPanel
 {
 public:
     InputPanel(wxWindow* parent);
     void setInputFields();
-    Animation getInputFields();
+    Animation getInputFields() const;
 
 private:
     wxTextCtrl* m_bitmapsize_x;
@@ -19,8 +19,9 @@ private:
     wxTextCtrl* m_f1_tcount;
     wxTextCtrl* m_f2_tcount;
     wxTextCtrl* m_frames_to_second;
-    std::array<wxTextCtrl*, 5> m_transforms1;
-    std::array<wxTextCtrl*, 5> m_transforms2;
+    std::array<std::array<wxTextCtrl*, 6>, 5> m_transforms1;
+    std::array<std::array<wxTextCtrl*, 6>, 5> m_transforms2;
 
     wxButton* m_save_button;
+    void onSaveButtonClicked(wxCommandEvent& e);
 };

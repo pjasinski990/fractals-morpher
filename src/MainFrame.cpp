@@ -38,6 +38,7 @@ void MainFrame::onLoadMenuClicked(wxCommandEvent& e)
     {
         animation = FileHandler::loadAnimationFromFile(dialog.GetPath());
         m_main_panel->setInfoText(animation.toString());
+        m_main_panel->fillInputFields();
     }
     catch(const std::ios_base::failure& e)
     {

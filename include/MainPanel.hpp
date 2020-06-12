@@ -1,8 +1,8 @@
 #pragma once
 
 #include <wx/wx.h>
+#include "MenuPanel.hpp"
 class Canvas;
-class MenuPanel;
 
 class MainPanel: public wxPanel
 {
@@ -11,6 +11,7 @@ public:
     ~MainPanel();
 
     void setInfoText(const std::string& text);
+    void fillInputFields() const {m_menu_panel->fillInputFields();}
     Canvas* getCanvas() {return m_canvas;}
 
 private:

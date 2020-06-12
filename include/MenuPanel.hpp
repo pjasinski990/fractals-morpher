@@ -8,6 +8,7 @@ class MenuPanel: public wxPanel
 public:
     MenuPanel(wxWindow* parent);
     ~MenuPanel();
+    void fillInputFields() const {m_input_panel->setInputFields();}
 
 private:
     wxButton* m_select_button;

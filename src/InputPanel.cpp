@@ -1,7 +1,10 @@
 #include "InputPanel.hpp"
 #include "design.hpp"
+#include "MainFrame.hpp"
+#include "Animation.hpp"
+#include "Fractal.hpp"
 
-InputPanel::InputPanel(wxWindow* parent): wxScrolledWindow(parent),
+InputPanel::InputPanel(wxWindow* parent): wxPanel(parent),
         m_bitmapsize_x{new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0L, wxTextValidator(wxFILTER_DIGITS))},
         m_bitmapsize_y{new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0L, wxTextValidator(wxFILTER_DIGITS))},
         m_points_count{new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0L, wxTextValidator(wxFILTER_DIGITS))},
@@ -11,7 +14,6 @@ InputPanel::InputPanel(wxWindow* parent): wxScrolledWindow(parent),
         m_save_button{new wxButton(this, wxID_ANY, wxT("Save"))}
 {
     wxBoxSizer* sizer_main = new wxBoxSizer(wxVERTICAL);
-    SetScrollbar(20, 20, 50, 50);
 
     // Bitmap size
     wxStaticBoxSizer* sizer_size = new wxStaticBoxSizer(wxHORIZONTAL, this, static_text::bitmap_size_label);
@@ -31,15 +33,15 @@ InputPanel::InputPanel(wxWindow* parent): wxScrolledWindow(parent),
     wxStaticBoxSizer* sizer_transforms1 = new wxStaticBoxSizer(wxVERTICAL, this, static_text::transforms_label);
 
     int k = 0;
-    for (auto && o: m_transforms1)
+    for (auto&& t: m_transforms1)
     {
         wxBoxSizer* s = new wxBoxSizer(wxHORIZONTAL);
         s->Add(new wxStaticText(this, wxID_ANY, "T" + std::to_string(++k)));
-        for (size_t i = 0; i < 6; i++)
+        for (auto&& field: t)
         {
-            o = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0L, wxTextValidator(wxFILTER_NUMERIC));
-            o->SetMaxSize(wxSize(45, 25));
-            s->Add(o);
+            field = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0L, wxTextValidator(wxFILTER_NUMERIC));
+            field->SetMaxSize(wxSize(65, 25));
+            s->Add(field);
         }
         sizer_transforms1->Add(s);
     }
@@ -61,15 +63,15 @@ InputPanel::InputPanel(wxWindow* parent): wxScrolledWindow(parent),
     wxStaticBoxSizer* sizer_transforms2 = new wxStaticBoxSizer(wxVERTICAL, this, static_text::transforms_label);
 
     k = 0;
-    for (auto && o: m_transforms2)
+    for (auto&& t: m_transforms2)
     {
         wxBoxSizer* s = new wxBoxSizer(wxHORIZONTAL);
         s->Add(new wxStaticText(this, wxID_ANY, "T" + std::to_string(++k)));
-        for (size_t i = 0; i < 6; i++)
+        for (auto&& field: t)
         {
-            o = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0L, wxTextValidator(wxFILTER_NUMERIC));
-            o->SetMaxSize(wxSize(45, 25));
-            s->Add(o);
+            field = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0L, wxTextValidator(wxFILTER_NUMERIC));
+            field->SetMaxSize(wxSize(65, 25));
+            s->Add(field);
         }
         sizer_transforms2->Add(s);
     }
@@ -80,6 +82,45 @@ InputPanel::InputPanel(wxWindow* parent): wxScrolledWindow(parent),
 
     sizer_main->Add(m_save_button, 0, wxCENTER | wxALL, 5);
     SetSizerAndFit(sizer_main);
+
+    m_save_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &InputPanel::onSaveButtonClicked, this);
 }
 
-//wxFILTER_NUMERIC
+void InputPanel::onSaveButtonClicked(wxCommandEvent& e)
+{
+    MainFrame::animation = getInputFields();
+}
+
+void InputPanel::setInputFields()
+{
+    auto a = MainFrame::animation;
+    
+    m_bitmapsize_x->SetValue(std::to_string(a.bitmap_size.GetWidth()));
+    m_bitmapsize_y->SetValue(std::to_string(a.bitmap_size.GetHeight()));
+    m_points_count->SetValue(std::to_string(a.iter_count));
+    m_f1_tcount->SetValue(std::to_string(a.fractals[0].transform_count));
+    m_f2_tcount->SetValue(std::to_string(a.fractals[1].transform_count));
+    m_frames_to_second->SetValue(std::to_string(a.fractals[0].frames_for_animation));
+
+    const Fractal& f1 = a.fractals[0];
+    const Fractal& f2 = a.fractals[1];
+    for (int i = 0; i < f1.transform_count; i++)
+    {
+        for (int j = 0; j < 6; j++)
+        {
+            m_transforms1[i][j]->SetValue(std::to_string(f1.transformations[i][j]));
+        }
+    }
+    for (int i = 0; i < f2.transform_count; i++)
+    {
+        for (int j = 0; j < 6; j++)
+        {
+            m_transforms2[i][j]->SetValue(std::to_string(f2.transformations[i][j]));
+        }
+    }
+}
+
+Animation InputPanel::getInputFields() const
+{
+    return Animation();
+}
