@@ -10,8 +10,5 @@ public:
     void generateLoadedAnimation(const wxString& dir_path);
 
 private:
-    void onPaintEvent(wxPaintEvent& e);
-    void paintNow();
-    void render(wxDC& dc);
 
 };

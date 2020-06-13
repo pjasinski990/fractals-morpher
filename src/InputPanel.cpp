@@ -135,6 +135,7 @@ Animation InputPanel::getInputFields() const
     Animation a;
     a.is_3d = 0;
     a.fractals_count = 2;
+    a.observer_pos = {0.0, 0.0, 0.0};
 
     a.bitmap_size.SetWidth(wxAtoi(m_bitmapsize_x->GetValue()));
     a.bitmap_size.SetHeight(wxAtoi(m_bitmapsize_y->GetValue()));
