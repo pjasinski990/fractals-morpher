@@ -67,6 +67,7 @@ std::vector<wxBitmap> Animation::generateBitmaps(wxDC& dc, const wxSize& canvas_
             mdc.SetBackground(colors::canvas_color);
             mdc.Clear();
 
+            mdc.SetPen(wxPen(colors_vec[points_current[0].color_index]));
             for (size_t k = 0; k < iter_count; k++)
             {
                 wxPoint point(points_current[k].x, points_current[k].y);

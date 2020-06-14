@@ -80,6 +80,7 @@ std::vector<wxColor> ColorGenerator::getColorsVector(int count)
     std::vector<wxColor> colors_vec;
     for (int i = 0; i < count; i++)
     {
+        auto color = ColorGenerator::getNewColor();
         colors_vec.push_back(ColorGenerator::getNewColor());
     }
     return colors_vec;
